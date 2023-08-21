@@ -1,0 +1,142 @@
+
+.title {
+  text-align: center;
+  cursor: pointer;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;  
+  padding-left: 10px;
+   
+}
+.title:hover {
+  text-align: center;
+  cursor: pointer;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-weight: bold;  
+   
+}
+
+.creator{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.creatorValue {
+  font-weight: bold;
+
+}
+.subject{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.subjectValue {
+  font-weight: bold;
+
+}
+
+.description{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.descriptionValue {
+  font-weight: bold;
+  
+
+}
+
+.identifier{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.identifierValue {
+  font-weight: bold;
+
+}
+.language{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.languageValue {
+  font-weight: bold;
+
+}
+.description{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.descriptionValue {
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.relation{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.relationValue {
+  font-weight: bold;
+
+}
+
+.date{
+  font-weight: bold;
+  padding-left: 10px;
+
+}
+.dateValue {
+  font-weight: bold;
+
+}
+
+.link {
+  font-weight: bold;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  padding-left: 10px;
+}
+ul {
+  list-style: none;
+}
+
+li {
+  background: rgba( 255, 255, 255, 0.25 );
+  box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+  backdrop-filter: blur( 5px );
+  -webkit-backdrop-filter: blur( 5px );
+  border-radius: 10px;
+  border: 1px solid rgba( 255, 255, 255, 0.18 );
+  margin-bottom: 5px;
+}
+li:hover {
+  background: rgba( 255, 255, 255, 0.25 );
+  box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+  backdrop-filter: blur( 5px );
+  -webkit-backdrop-filter: blur( 10px );
+  border-radius: 10px;
+  border: 1px solid rgba( 255, 255, 255, 0.18 );
+  margin-bottom: 5px;
+  
+  
+}
+
+.details {
+  display: none;
+  margin-top: 10px;
+
+  
+  animation: fade-in-out 2s ease;
+}
+
+@keyframes fade-in-out {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.details.show {
+  display:contents;
+  animation-name: fade-in-out;
+}

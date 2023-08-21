@@ -1,0 +1,9 @@
+const expandIcon = document.createElement('i');
+        expandIcon.classList.add('fas', 'fa-plus');
+        title.appendChild(expandIcon);
+
+
+        const collapseIcon = document.createElement('i');
+        collapseIcon.classList.add('fas', 'fa-minus');
+        collapseIcon.style.display = 'none';
+        title.appendChild(collapseIcon);

@@ -1,0 +1,284 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Solr Search</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="http://localhost:8000/static/sidebar.css">
+  <link rel="stylesheet" href="http://localhost:8000/static/buttons.css">
+  <link rel="stylesheet" href="http://localhost:8000/static/text.css">
+  <link rel="stylesheet" href="http://localhost:8000/static/background.css">
+  <link rel="stylesheet" href="http://localhost:8000/static/results.css">
+  <link rel="stylesheet" href="http://localhost:8000/static/clouds.css">
+
+</head>
+<body>
+
+  <div class = "headingDiv">
+    <img class="sheep" src="{% static 'logo.jpg' %}" alt ="Logo">
+    <h1 class="heading"> EPNA</h1>
+    
+
+
+  </div>
+ 
+ 
+  <div class="container">
+    <form class="search_function" id="searchForm">
+      <div class="container2">
+        <input class="input_box_search" type="text" id="searchInput" placeholder="Enter your search query">
+        <button id="searchButton" class="search_button" type="submit">Search</button>
+        <button id="filterButton" class="filter_button" type="filter">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="sidebar">
+      
+    <div class="filter">
+      <label>
+        <input  type="checkbox" name="filter" value="date">
+        Date
+      </label>
+      <input class ="filter_input" type="text" name="date_filter" placeholder="Enter date (e.g. 2009)">
+    </div>
+    <div class="filter">
+      <label>
+        <input  type="checkbox" name="filter" value="creator">
+        Author
+      </label>
+      <input  class ="filter_input" type="text" name="creator_filter" placeholder="Enter author (e.g. J. M. Coetzee)">
+    </div>
+    <div class="filter">
+      <label>
+        <input type="checkbox" name="filter" value="language">
+        Language
+      </label>
+      <input class ="filter_input" type="text" name="language_filter" placeholder="Enter language (e.g. eng)">
+    </div>
+    <!-- Add more filters as needed -->
+  </div>
+
+  <div id="background-wrap">
+    <div class="x1">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x2">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x3">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x4">
+        <div class="cloud"></div>
+    </div>
+
+    <div class="x5">
+        <div class="cloud"></div>
+    </div>
+</div>
+
+  <div id="searchResults">
+    <ul id="searchResultsList"></ul>
+  </div>
+
+  <div class="pagination" style="display: none;">
+    <p>Page <span id="currentPage"></span> of <span id="totalPages"></span></p>
+    <a href="#" id="firstPage">First</a>
+    <a href="#" id="previousPage">Previous</a>
+    <a href="#" id="nextPage">Next</a>
+    <a href="#" id="lastPage">Last</a>
+  </div>
+ 
+  <script>
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    
+    searchForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      const query = searchInput.value;
+      const selectedFilters = Array.from(document.querySelectorAll('input[name="filter"]:checked')).map(filter => filter.value);
+      const dateFilter = document.querySelector('input[name="date_filter"]').value;
+      const creatorFilter = document.querySelector('input[name="creator_filter"]').value;
+      const languageFilter = document.querySelector('input[name="language_filter"]').value;
+  
+      fetch(`/search/?q=${encodeURIComponent(query)}&filter=${encodeURIComponent(selectedFilters.join(','))}&date_filter=${encodeURIComponent(dateFilter)}&creator_filter=${encodeURIComponent(creatorFilter)}&language_filter=${encodeURIComponent(languageFilter)}`, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        displayResults(data.results);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+      const paginationContainer = document.querySelector('.pagination');
+      paginationContainer.style.display = '';
+      handlePaginationClick(1);
+    });
+
+    function displayResults(results) {
+      const searchResults = document.getElementById('searchResults');
+      searchResults.innerHTML = '';
+      
+      if (results.length === 0) {
+        searchResults.innerHTML = '<p>No results found.</p>';
+        return;
+      }
+
+      const ul = document.createElement('ul');
+
+      results.forEach(result => {
+        const li = document.createElement('li');
+
+        const title = document.createElement('span');
+        title.classList.add('title');
+
+        const titleText = document.createTextNode(result.title);
+        title.appendChild(titleText);
+
+
+        const link = document.createElement('a');
+        link.classList.add('link');
+        link.href = result.identifier; 
+        link.textContent = 'View Full Document Online'; 
+
+        title.addEventListener('click', function() {
+        toggleDetails(li);
+        
+        });
+        
+        const detailsDiv = document.createElement('div');
+        detailsDiv.className = 'details';
+        
+        // Add fields to the details section
+        for (const field in result) {
+          if (field !== 'title') {
+            
+            const fieldLabel = document.createElement('span');
+            fieldLabel.textContent = field + ': ';
+                        fieldLabel.classList.add(field.toString());
+            
+
+            const fieldValue = document.createElement('span');
+            fieldValue.textContent = result[field];
+                        fieldValue.classList.add(field.toString()+'Value');
+
+            const fieldContainer = document.createElement('p');
+            fieldContainer.appendChild(fieldLabel);
+            fieldContainer.appendChild(fieldValue);
+            
+            detailsDiv.appendChild(fieldContainer);
+          }
+        }
+        
+        li.appendChild(title);
+        li.appendChild(detailsDiv);
+        detailsDiv.appendChild(link);
+        ul.appendChild(li);
+      });
+      
+      searchResults.appendChild(ul);
+
+    function toggleDetails(li) {
+      const detailsDiv = li.querySelector('.details');
+            detailsDiv.classList.toggle('show');
+            link.classList.toggle('show')
+      }
+    }
+
+  const currentPageElement = document.getElementById('currentPage');
+  const totalPagesElement = document.getElementById('totalPages');
+  const firstPageLink = document.getElementById('firstPage');
+  const previousPageLink = document.getElementById('previousPage');
+  const nextPageLink = document.getElementById('nextPage');
+  const lastPageLink = document.getElementById('lastPage');
+  
+
+function handlePaginationClick(pageNumber) {
+    const query = searchInput.value;
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          updatePagination(response.page_number, response.paginator.num_pages);
+          displayResults(response.results);
+        } else {
+          console.error('Error fetching search results');
+        }
+      }
+    };
+
+    const url = `/paginate_search/?q=${query}&page=${pageNumber}`;
+    xhr.open('GET', url, true);
+    xhr.send();
+  }
+
+  function updatePagination(currentPage, totalPages) {
+    currentPageElement.textContent = currentPage;
+    totalPagesElement.textContent = totalPages;
+
+    if (currentPage === 1) {
+      firstPageLink.style.display = 'none';
+      previousPageLink.style.display = 'none';
+    } else {
+      firstPageLink.style.display = 'inline';
+      previousPageLink.style.display = 'inline';
+    }
+
+    if (currentPage === totalPages) {
+      nextPageLink.style.display = 'none';
+      lastPageLink.style.display = 'none';
+    } else {
+      nextPageLink.style.display = 'inline';
+      lastPageLink.style.display = 'inline';
+    }
+  }
+
+  function getUrlParameter(name) {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  const results = regex.exec(location.search);
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+
+  firstPageLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    handlePaginationClick(1);
+  });
+
+  previousPageLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    const currentPage = parseInt(currentPageElement.textContent);
+    handlePaginationClick(currentPage - 1);
+  });
+
+  nextPageLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    const currentPage = parseInt(currentPageElement.textContent);
+    handlePaginationClick(currentPage + 1);
+  });
+
+  lastPageLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    const totalPages = parseInt(totalPagesElement.textContent);
+    handlePaginationClick(totalPages);
+  });
+  </script>
+
+<script src="http://localhost:8000/static/bck.js"></script>
+
+</body>
+
+</html>

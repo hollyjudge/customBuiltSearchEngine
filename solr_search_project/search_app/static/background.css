@@ -1,0 +1,36 @@
+body {
+    background-size: cover;
+    background-image: linear-gradient(109.6deg, rgb(116, 222, 233) 11.2%, rgb(70, 153, 248) 91.1%);
+    
+    
+
+
+}
+
+body.background1 {
+
+    background-image:linear-gradient(109.6deg,rgb(70, 153, 248) 91.1%, rgb(116, 222, 233) 11.2%);
+    
+
+
+}
+
+.sheep{
+    max-width: 70px;
+    max-height: 70px;
+    border-radius: 50px;
+    align-items: center;
+    
+}
+
+.headingDiv{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sheep{
+    margin-right: 10px;
+}
+
+
